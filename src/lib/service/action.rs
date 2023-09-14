@@ -25,3 +25,19 @@ pub async fn get_clip(req: ask::GetClip, pool: &DatabasePool) -> Result<Clip, Se
         Ok(clip)
     }
 }
+
+pub async fn increase_hit_count(
+    shortcode: &ShortCode,
+    hits: u32,
+    pool: &DatabasePool,
+) -> Result<(), ServiceError> {
+    Ok(query::increase_hit_count(shortcode, hits, pool).await?)
+}
+
+pub async fn begin_transaction(pool: &DatabasePool) -> Result<Transaction<'_>, ServiceError> {
+    Ok(pool.begin().await?)
+}
+
+pub async fn end_transaction(transaction: Transaction<'_>) -> Result<(), ServiceError> {
+    Ok(transaction.commit().await?)
+}
